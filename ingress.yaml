@@ -25,7 +25,7 @@ spec:
   rules:
     - http:
         paths:
-          # 🚀 Route 1: /api/*
+          # Route 1: /api/*
           - path: /api
             pathType: Prefix
             backend:
@@ -34,7 +34,7 @@ spec:
                 port:
                   number: 80
                   
-          # 🚀 Route 2: /admin/*
+          # Route 2: /admin/*
           - path: /admin
             pathType: Prefix
             backend:
@@ -43,7 +43,7 @@ spec:
                 port:
                   number: 80
                   
-          # 🚀 Route 3: /dashboard/*
+          # Route 3: /dashboard/*
           - path: /dashboard
             pathType: Prefix
             backend:
