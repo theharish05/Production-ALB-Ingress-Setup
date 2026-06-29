@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: production-alb-ingress
+  annotations:
+    # 1. Triggers the Helm-installed AWS ALB Controller
+    kubernetes.io/ingress.class: alb
+    
+    # 2. Configures the ALB to be public-facing
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    
+    # 3. Directs traffic straight to pod IPs (standard for AWS EKS)
+    alb.ingress.kubernetes.io/target-type: ip
+    
+    # 4. Opens Port 80 for testing (and 443 for production spec)
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    
+    # 5. Requirement: Target Group Health Checks
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+spec:
+  rules:
+    - http:
+        paths:
+          # 🚀 Route 1: /api/*
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+                  
+          # 🚀 Route 2: /admin/*
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-service
+                port:
+                  number: 80
+                  
+          # 🚀 Route 3: /dashboard/*
+          - path: /dashboard
+            pathType: Prefix
+            backend:
+              service:
+                name: dashboard-service
+                port:
+                  number: 80
